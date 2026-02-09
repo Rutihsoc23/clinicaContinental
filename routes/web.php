@@ -5,6 +5,7 @@ use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\HistoriaClinicaController;
+use App\Http\Controllers\ReporteController;
 
 // El ->name('home') es lo que permite usar route('home') en el HTML
 Route::get('/', function () {
@@ -19,6 +20,7 @@ Route::post('historias', [HistoriaClinicaController::class, 'store'])->name('his
 Route::middleware(['auth', 'role:admin'])->group(function () {
     // Aquí movemos la gestión de doctores
     Route::resource('doctores', DoctorController::class);
+    Route::get('reportes/diario', [ReporteController::class, 'diario'])->name('reportes.diario');
 });
 
 // --- GRUPO PROTEGIDO: RECEPCIONISTAS Y ADMINS ---
