@@ -15,8 +15,24 @@ class CitaController extends Controller
     public function create()
     {
         // Eager Loading: Traemos al doctor con sus disponibilidades y los nombres de los días de un solo golpe
-        $doctores = Doctor::with(['especialidad', 'disponibilidad.dia'])->get();
-        $pacientes = Paciente::all();
+        $doctores = Doctor::select('id', 'nombre_doctor', 'apellido_paterno_doctor', 'especialidad_id')
+        ->with([
+            'especialidad:id,nombre_especialidad', // Solo traemos ID y Nombre de especialidad
+            'disponibilidad' => function($query) {
+                $query->select('id', 'doctor_id', 'dia_id', 'hora_inicio_disponibilidad', 'hora_fin_disponibilidad');
+            },
+            'disponibilidad.dia:id,nombre_dia' // Solo ID y nombre del día
+        ])
+        ->get();
+
+        // 2. Optimización Pacientes
+        // En lugar de 'all()', traemos solo lo necesario para identificar al paciente.
+        $pacientes = Paciente::select('id', 'dni_paciente', 'nombre_paciente', 'apellido_paterno_paciente')
+            ->orderBy('id', 'desc')
+            ->limit(500)
+            ->get();
+
+        // Estados son pocos (3-5), no impacta el rendimiento.
         $estados = EstadoCita::all();
 
         return view('citas.create', compact('doctores', 'pacientes', 'estados'));
