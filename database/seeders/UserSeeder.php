@@ -10,20 +10,24 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Usuario Admin
-        User::create([
-            'name' => 'Administrador',
-            'email' => 'admin@clinica.com',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin'
-        ]);
+        // Usuario Admin: Solo se crea si el email no existe
+        User::firstOrCreate(
+            ['email' => 'admin@clinica.com'], // Condición de búsqueda
+            [
+                'name' => 'Administrador',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin'
+            ]
+        );
 
-        // Usuario Recepcionista
-        User::create([
-            'name' => 'Recepcionista',
-            'email' => 'recepcion@clinica.com',
-            'password' => Hash::make('recepcion123'),
-            'role' => 'recepcionista'
-        ]);
+        // Usuario Recepcionista: Solo se crea si el email no existe
+        User::firstOrCreate(
+            ['email' => 'recepcion@clinica.com'], // Condición de búsqueda
+            [
+                'name' => 'Recepcionista',
+                'password' => Hash::make('recepcion123'),
+                'role' => 'recepcionista'
+            ]
+        );
     }
 }
