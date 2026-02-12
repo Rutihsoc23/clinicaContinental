@@ -66,4 +66,32 @@ class CitaController extends Controller
         Cita::destroy($id);
         return redirect()->route('citas.index')->with('success', 'Cita cancelada y eliminada del sistema.');
     }
+    /**
+     * Muestra el formulario para editar el estado de la cita.
+     */
+    public function edit($id)
+    {
+        $cita = Cita::findOrFail($id);
+        $estados = EstadoCita::all(); // Traemos todos los estados (Pendiente, Atendida, etc.)
+        
+        return view('citas.edit', compact('cita', 'estados'));
+    }
+
+    /**
+     * Actualiza el estado en la base de datos.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'estado_id' => 'required|exists:estado_citas,id',
+        ]);
+
+        $cita = Cita::findOrFail($id);
+        $cita->update([
+            'estado_id' => $request->estado_id
+        ]);
+
+        return redirect()->route('citas.index')
+                        ->with('success', 'El estado de la cita se actualizó correctamente.');
+    }
 }
